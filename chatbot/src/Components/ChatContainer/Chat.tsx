@@ -35,8 +35,7 @@ const ChatContainer: React.FC = () => {
 
     // Show welcome message only once
     useEffect(() => {
-        if (!hasShownWelcome) {
-            // Dispatch welcome message and stock exchange options
+        if (hasShownWelcome) {            
             dispatch(
                 addMessageToChat({
                     sender: 'bot',
@@ -56,8 +55,8 @@ const ChatContainer: React.FC = () => {
                     })),
                 })
             );
-            // Set flag to indicate welcome message has been shown
-            dispatch(setHasShownWelcome(true));
+            dispatch(setHasShownWelcome());
+
         }
     }, []);
 

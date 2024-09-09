@@ -41,8 +41,8 @@ const chatSlice = createSlice({
         setSelectedStock: (state, action: PayloadAction<string | null>) => {
             state.selectedStock = action.payload;
         },
-        setHasShownWelcome: (state, action: PayloadAction<boolean>) => {
-            state.hasShownWelcome = action.payload;
+        setHasShownWelcome: (state) => {
+            state.hasShownWelcome = true;
         },
     },
 });
