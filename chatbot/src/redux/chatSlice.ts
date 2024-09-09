@@ -1,4 +1,5 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { RootState } from './store';
 
 
 interface ChatOption {
@@ -43,9 +44,10 @@ const chatSlice = createSlice({
         },
         setHasShownWelcome: (state) => {
             state.hasShownWelcome = true;
-        },
+        }
     },
 });
+export const getHasShownWelcome = (state: RootState) => state.chat.hasShownWelcome;
 
 export const { addMessageToChat, setSelectedExchange, setSelectedStock, setHasShownWelcome } = chatSlice.actions;
 

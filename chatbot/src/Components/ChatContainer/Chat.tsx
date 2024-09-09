@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '../../redux/store';
-import { addMessageToChat, setSelectedExchange, setSelectedStock, setHasShownWelcome } from '../../redux/chatSlice';
+import { addMessageToChat, setSelectedExchange, setSelectedStock, setHasShownWelcome, getHasShownWelcome } from '../../redux/chatSlice';
 import ChatBubble from '../ChatBubble/ChatBubble';
 import stockData from '../../assets/Chatbot - stock data.json'; // Import stock data
 import '../../App.css';
@@ -20,11 +20,13 @@ interface Exchange {
 
 const ChatContainer: React.FC = () => {
     const dispatch = useDispatch();
-    const { chatHistory, selectedExchange, hasShownWelcome } = useSelector((state: RootState) => state.chat);
+    const { chatHistory, selectedExchange } = useSelector((state: RootState) => state.chat);
+    const hasShownWelcome = useSelector(getHasShownWelcome);
     const chatBodyRef = useRef<HTMLDivElement>(null);
     const exchanges = stockData as Exchange[];
 
     const [isChatOpen, setIsChatOpen] = useState(false); // State for controlling chat visibility
+    const [localWelcomeShown, setLocalWelcomeShown] = useState(false); // Local flag to prevent multiple dispatches
 
     // Scroll to the bottom of chat when a new message is added
     useEffect(() => {
@@ -35,7 +37,7 @@ const ChatContainer: React.FC = () => {
 
     // Show welcome message only once
     useEffect(() => {
-        if (hasShownWelcome) {            
+        if (!localWelcomeShown &&  !hasShownWelcome) {            
             dispatch(
                 addMessageToChat({
                     sender: 'bot',
@@ -55,6 +57,7 @@ const ChatContainer: React.FC = () => {
                     })),
                 })
             );
+            setLocalWelcomeShown(true); // Prevent the effect from running again locally
             dispatch(setHasShownWelcome());
 
         }
