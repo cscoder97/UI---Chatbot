@@ -1,32 +1,20 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '../../redux/store';
-import { addMessageToChat, setSelectedExchange, setSelectedStock, setHasShownWelcome, getHasShownWelcome } from '../../redux/chatSlice';
+import { addMessageToChat, setSelectedExchange, setSelectedStock } from '../../redux/chatSlice';
 import ChatBubble from '../ChatBubble/ChatBubble';
 import stockData from '../../assets/Chatbot - stock data.json'; // Import stock data
 import '../../App.css';
+import  { Exchange } from '../../Interfaces/Interfaces';
 
-interface Stock {
-    code: string;
-    stockName: string;
-    price: number;
-}
-
-interface Exchange {
-    code: string;
-    stockExchange: string;
-    topStocks: Stock[];
-}
 
 const ChatContainer: React.FC = () => {
     const dispatch = useDispatch();
     const { chatHistory, selectedExchange } = useSelector((state: RootState) => state.chat);
-    const hasShownWelcome = useSelector(getHasShownWelcome);
     const chatBodyRef = useRef<HTMLDivElement>(null);
     const exchanges = stockData as Exchange[];
 
     const [isChatOpen, setIsChatOpen] = useState(false); // State for controlling chat visibility
-    const [localWelcomeShown, setLocalWelcomeShown] = useState(false); // Local flag to prevent multiple dispatches
 
     // Scroll to the bottom of chat when a new message is added
     useEffect(() => {
@@ -34,34 +22,6 @@ const ChatContainer: React.FC = () => {
             chatBodyRef.current.scrollTop = chatBodyRef.current.scrollHeight;
         }
     }, [chatHistory]);
-
-    // Show welcome message only once
-    useEffect(() => {
-        if (!localWelcomeShown &&  !hasShownWelcome) {            
-            dispatch(
-                addMessageToChat({
-                    sender: 'bot',
-                    content: 'Welcome to the Stock Chatbot! How can I assist you today?',
-                    type: 'text',
-                })
-            );
-            dispatch(
-                addMessageToChat({
-                    sender: 'bot',
-                    content: 'Please select a stock exchange:',
-                    type: 'option',
-                    options: exchanges.map((exchange) => ({
-                        label: exchange.stockExchange,
-                        value: exchange.code,
-                        optionType: 'exchange',
-                    })),
-                })
-            );
-            setLocalWelcomeShown(true); // Prevent the effect from running again locally
-            dispatch(setHasShownWelcome());
-
-        }
-    }, []);
 
     // Handle exchange selection
     const handleExchangeSelection = (exchangeCode: string) => {

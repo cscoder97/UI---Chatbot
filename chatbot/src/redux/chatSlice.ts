@@ -1,32 +1,26 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { RootState } from './store';
+import stockData from '../assets/Chatbot - stock data.json'; // Import stock data
+import  { Exchange, ChatMessage, ChatState } from '../Interfaces/Interfaces';
 
 
-interface ChatOption {
-    label: string;
-    value: string;
-    optionType: 'stock' | 'exchange' | 'navigate'; // Updated option types
-}
+const exchanges = stockData as Exchange[];
 
-interface ChatMessage {
-    sender: 'user' | 'bot';
-    content: string;
-    type: 'text' | 'option';
-    options?: ChatOption[]; // Options array
-}
-
-interface ChatState {
-    chatHistory: ChatMessage[];
-    selectedExchange: string | null;
-    selectedStock: string | null;
-    hasShownWelcome: boolean; // Track if welcome message has been shown
-}
 
 const initialState: ChatState = {
-    chatHistory: [],
+    chatHistory: [
+    {
+        sender: 'bot',
+        content: "Welcome to the Stock Chatbot! How can I assist you today?",
+        type: 'option',
+        options: exchanges.map((exchange) => ({
+            label: exchange.stockExchange,
+            value: exchange.code,
+            optionType: 'exchange',
+        })),
+    },
+],
     selectedExchange: null,
     selectedStock: null,
-    hasShownWelcome: false, // Initially false
 };
 
 const chatSlice = createSlice({
@@ -42,13 +36,9 @@ const chatSlice = createSlice({
         setSelectedStock: (state, action: PayloadAction<string | null>) => {
             state.selectedStock = action.payload;
         },
-        setHasShownWelcome: (state) => {
-            state.hasShownWelcome = true;
-        }
     },
 });
-export const getHasShownWelcome = (state: RootState) => state.chat.hasShownWelcome;
 
-export const { addMessageToChat, setSelectedExchange, setSelectedStock, setHasShownWelcome } = chatSlice.actions;
+export const { addMessageToChat, setSelectedExchange, setSelectedStock } = chatSlice.actions;
 
 export default chatSlice.reducer;
