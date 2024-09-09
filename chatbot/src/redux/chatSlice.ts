@@ -1,22 +1,31 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
+
+interface ChatOption {
+    label: string;
+    value: string;
+    optionType: 'stock' | 'exchange' | 'navigate'; // Updated option types
+}
+
 interface ChatMessage {
     sender: 'user' | 'bot';
     content: string;
     type: 'text' | 'option';
-    options?: { label: string; value: string }[];
+    options?: ChatOption[]; // Options array
 }
 
 interface ChatState {
     chatHistory: ChatMessage[];
     selectedExchange: string | null;
     selectedStock: string | null;
+    hasShownWelcome: boolean; // Track if welcome message has been shown
 }
 
 const initialState: ChatState = {
     chatHistory: [],
     selectedExchange: null,
     selectedStock: null,
+    hasShownWelcome: false, // Initially false
 };
 
 const chatSlice = createSlice({
@@ -32,14 +41,12 @@ const chatSlice = createSlice({
         setSelectedStock: (state, action: PayloadAction<string | null>) => {
             state.selectedStock = action.payload;
         },
-        clearChat: (state) => {
-            state.selectedExchange = null;
-            state.selectedStock = null;
-            state.chatHistory = [];
+        setHasShownWelcome: (state, action: PayloadAction<boolean>) => {
+            state.hasShownWelcome = action.payload;
         },
     },
 });
 
-export const { addMessageToChat, setSelectedExchange, setSelectedStock, clearChat } = chatSlice.actions;
+export const { addMessageToChat, setSelectedExchange, setSelectedStock, setHasShownWelcome } = chatSlice.actions;
 
 export default chatSlice.reducer;

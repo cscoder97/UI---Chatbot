@@ -1,7 +1,7 @@
 import React from 'react';
 import { Provider } from 'react-redux';
-import store from './store/store';
-import Chat from './Components/Chat';
+import store from './redux/store';
+import Chat from './Components/ChatContainer/Chat';
 
 const App: React.FC = () => {
     return (
@@ -14,4 +14,6 @@ const App: React.FC = () => {
 };
 
 export default App;
+
+
 
